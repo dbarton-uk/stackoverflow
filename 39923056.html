@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3.xml Example</title>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <style type="text/css">
+        .chart div {
+            font: 10px sans-serif;
+            background-color: steelblue;
+            text-align: right;
+            padding: 3px;
+            margin: 1px;
+            color: white;
+            display:inline-block;
+            width:30px;
+        }
+        .howard {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart" class="chart">
+
+    </div>
+    <script>
+
+        var _xml = '';
+
+        d3.xml("updatedphillies.xml", "application/xml", function(xml) {
+
+            _xml = xml;
+
+            d3.select("#chart")
+                    .selectAll("div")
+                    .data(xml.documentElement.getElementsByTagName("doubles"))
+                    .enter().append("div")
+                    .style("height", function(d) { return d.textContent * 1 + 10 + "px"; })
+                    .text(function(d) { return d.textContent; });
+            console.log(xml.documentElement.getElementsByTagName("player"));
+        });
+
+        console.log(_xml);
+
+    </script>
+</body>
+</html>

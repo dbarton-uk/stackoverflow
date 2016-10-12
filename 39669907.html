@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+
+</head>
+<body>
+
+</body>
+
+<script type="text/javascript">
+
+  var config = {
+    canvas: {width: 900,height: 550},
+    margin: {x: 250, y: 100},
+    get radius () {
+      return this.canvas.height / 80;
+    }
+  };
+
+  var nClicks = 0, svg = d3.select("body").append("svg");
+
+  var range = 100;
+  var data = {
+    nodes:d3.range(0, range).map(function(d){ return {label: "l"+d ,r: config.radius,color: d3.scaleOrdinal(d3.schemeCategory10)}})
+  };
+
+  setSize(config);
+
+  function setSize(config) {
+    svg
+      .attr("width", config.canvas.width)
+      .attr("height", config.canvas.height)
+      .attr("id", "canvas")
+      .style("border", "1px solid black")
+      .attr("onclick", "transitionTo()");
+  }
+
+  var simulation = d3.forceSimulation()
+    .velocityDecay(0.05)
+    .force("collide",d3.forceCollide( function(d){return d.r + 1 }).iterations(1) )
+    .force("charge", d3.forceManyBody().strength(1))
+    .force("center", d3.forceCenter(config.canvas.width / 2, config.canvas.height / 2))
+    .force("y", d3.forceY(0))
+    .force("x", d3.forceX(0));
+
+
+
+  var node = svg.append("g")
+    .attr("class", "nodes")
+    .selectAll("circle")
+    .data(data.nodes)
+    .enter().append("circle")
+    .attr("r", function(d){  return d.r })
+    .attr('cx', function(d, i) { return i % 10 * (config.canvas.width - config.margin.x*2) / 10 + config.radius + config.margin.x; })
+    .attr('cy', function(d, i) {return (Math.floor(i/10) * (config.canvas.height - config.margin.y*2) / 10) + config.margin.y + config.radius});
+
+
+ var iteration = 0;
+
+
+  function ticked() {
+
+      node
+        .attr("cx", function(d) {
+          return d.x;
+        })
+        .attr("cy", function(d) {
+          return d.y;
+        });
+
+  }
+
+
+  simulation
+    .nodes(data.nodes);
+
+  function transitionTo() {
+    simulation.on("tick", ticked);
+
+  }
+
+
+
+</script>
+</html>
